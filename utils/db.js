@@ -1,34 +1,45 @@
-import { MongoClient } from 'mongodb';
-import { config } from 'dotenv';
+import mongodb from 'mongodb';
+// eslint-disable-next-line no-unused-vars
+import Collection from 'mongodb/lib/collection';
+import envLoader from './env_loader';
 
-/** db client */
-
-config();
 
 class DBClient {
-  constructor() {
-    this.db = null;
-    this.client = new MongoClient(process.env.DB_HOST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    this.client.connect((err) => {
-      if (err) console.log(err.message);
-      this.db = this.client.db(process.env.DB_DATABASE);
-    });
-  }
 
-  isAlive() {
-    return !!this.client && !!this.db;
-  }
+    constructor() {
+        envLoader();
+        const { DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+        this.host = DB_HOST;
+        this.port = DB_PORT;
+        this.database = DB_DATABASE;
+        this.client = new mongodb.MongoClient(`mongodb://${this.host}:${this.port}`, { useUnifiedTopology: true });
 
-  async nbUsers() {
-    return this.db.collection('users').countDocuments();
-  }
+        this.client.connect((err) => {
+            if (err) console.log(err);
+            else console.log('Database connected');
+        });
+    }
 
-  async nbFiles() {
-    return this.db.collection('files').countDocuments();
-  }
+        isAlive() {
+            return this.client.isConnected();
+        }
+
+        async nbUsers() {
+            return this.client.db(this.database).collection('users').countDocuments();
+        }
+
+        async nbFiles() {
+            return this.client.db(this.database).collection('files').countDocuments();
+        }
+        
+        async findUser(user) {
+            return this.client.db(this.database).collection('users').findOne(user);
+        }
+
+        async createUser(user) {
+            return this.client.db(this.database).collection('users').insertOne(user);
+        }
+
 }
 
 const dbClient = new DBClient();
