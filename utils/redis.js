@@ -1,5 +1,3 @@
-// redis utils
-
 import redis from 'redis';
 
 class RedisClient {
@@ -11,7 +9,9 @@ class RedisClient {
     }
     
     isAlive() {
-        return this.client.connected;
+        if (this.client.connected) {
+        return true;
+        }
     }
     
     async get(key) {
@@ -28,6 +28,7 @@ class RedisClient {
         await this.client.del(key);
     }
     }
+
 
 const redisClient = new RedisClient();
 
