@@ -1,12 +1,10 @@
 import mongodb from 'mongodb';
-import Collection from 'mongodb/lib/collection';
 import envLoader from './env_loader';
 
 /**
  * Represents a MongoDB client.
  */
 class DBClient {
-
   constructor() {
     envLoader();
     const host = process.env.DB_HOST || 'localhost';
@@ -60,4 +58,5 @@ class DBClient {
 }
 
 export const dbClient = new DBClient();
+
 export default dbClient;
