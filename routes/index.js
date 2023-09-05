@@ -1,4 +1,5 @@
 import AppController from '../controllers/AppController';
+import UsersController from '../controllers/UsersController';
 import { APIError, errorResponse } from '../middlewares/error';
 
 /**
@@ -8,8 +9,7 @@ import { APIError, errorResponse } from '../middlewares/error';
 const injectRoutes = (api) => {
   api.get('/status', AppController.getStatus);
   api.get('/stats', AppController.getStats);
-  api.post('/users', AppController.postNew);
-  api.get('/users/me', AppController.getMe);
+  api.post('/users', UsersController.postNew);
   api.all('*', (req, res, next) => {
     errorResponse(new APIError(404, `Cannot ${req.method} ${req.url}`), req, res, next);
   });
